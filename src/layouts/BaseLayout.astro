@@ -1,0 +1,44 @@
+---
+import '../styles/global.css';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { getLangFromUrl, htmlLang, useTranslations } from '../i18n/ui';
+
+interface Props {
+	title?: string;
+	description?: string;
+	showSiteChrome?: boolean;
+}
+
+const { title = SITE_TITLE, description = SITE_DESCRIPTION, showSiteChrome = true } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<!doctype html>
+<html lang={htmlLang[lang]}>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="color-scheme" content="dark" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<link rel="canonical" href={canonicalURL} />
+		<link rel="sitemap" href="/sitemap-index.xml" />
+		<link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href={new URL('rss.xml', Astro.site)} />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="description" content={description} />
+		<title>{title === SITE_TITLE ? title : `${title} | ${SITE_TITLE}`}</title>
+	</head>
+	<body>
+		{showSiteChrome && <header class="site-header">
+			<nav aria-label="Main navigation">
+				<a href="/">{t('nav.home')}</a>
+				<a href="/blog">{t('nav.blog')}</a>
+				<a href="/projects">{t('nav.projects')}</a>
+			</nav>
+		</header>}
+		{showSiteChrome ? <main><slot /></main> : <slot />}
+		{showSiteChrome && <footer class="site-footer">© {new Date().getFullYear()} {SITE_TITLE}</footer>}
+	</body>
+</html>

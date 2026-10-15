@@ -1,0 +1,73 @@
+---
+interface Props {
+	title: string;
+	fonts: string;
+}
+
+const { title, fonts } = Astro.props;
+const current = Astro.url.pathname.replace(/\/$/, '');
+const concepts = [
+	{ href: '/lab/a', label: 'A 藍曬筆記' },
+	{ href: '/lab/b', label: 'B 孔版印刷' },
+	{ href: '/lab/c', label: 'C 直排檔案' },
+];
+---
+
+<!doctype html>
+<html lang="zh-Hant-TW">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="color-scheme" content="dark" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link rel="stylesheet" href={fonts} />
+		<title>{title} | Design lab</title>
+	</head>
+	<body>
+		<slot />
+		<nav class="lab-switcher" aria-label="Design concepts">
+			<a href="/lab" aria-current={current === '/lab' ? 'page' : undefined}>Lab</a>
+			{concepts.map((c) => <a href={c.href} aria-current={current === c.href ? 'page' : undefined}>{c.label}</a>)}
+		</nav>
+	</body>
+</html>
+
+<style is:global>
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
+	body {
+		margin: 0;
+	}
+	.lab-switcher {
+		position: fixed;
+		bottom: 12px;
+		left: 50%;
+		transform: translateX(-50%);
+		display: flex;
+		gap: 2px;
+		padding: 4px;
+		border-radius: 999px;
+		background: rgb(30 30 34 / 0.85);
+		backdrop-filter: blur(8px);
+		font: 13px/1 system-ui, sans-serif;
+		z-index: 100;
+		max-width: calc(100vw - 24px);
+		overflow-x: auto;
+	}
+	.lab-switcher a {
+		color: #ccc;
+		text-decoration: none;
+		padding: 8px 12px;
+		border-radius: 999px;
+		white-space: nowrap;
+	}
+	.lab-switcher a[aria-current='page'] {
+		background: #eee;
+		color: #111;
+	}
+</style>

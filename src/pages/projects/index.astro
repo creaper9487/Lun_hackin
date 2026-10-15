@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Counter from '../../components/react/Counter';
+import VueCounter from '../../components/vue/VueCounter.vue';
+---
+
+<BaseLayout title="Projects">
+	<h1>Projects</h1>
+	<p>Interactive demos — React and Vue islands side by side.</p>
+	<Counter client:load />
+	<VueCounter client:load />
+</BaseLayout>

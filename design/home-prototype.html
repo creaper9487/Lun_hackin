@@ -1,0 +1,1156 @@
+<title>Lun-hackin 首頁</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700;900&family=JetBrains+Mono:wght@400;700&family=Tilt+Neon&family=LXGW+WenKai+TC:wght@400;700&display=swap">
+<style>
+  /* Layout: handle + contact icons on top; project index left, framed article reel right with a scroll gauge beneath;
+     then two pinned 100vh stages (Projects, Interests) with 300vh of scroll each; page progress rail on the right.
+     One layout, four treatments switched by :root[data-style]. Default = riso print on dark stock. */
+  :root {
+    --ground: #1c1530;
+    --ground-2: #251c3d;
+    --text: #f1e9f5;
+    --muted: #a99db8;
+    --a1: #ff4fa3;
+    --a2: #3e6bff;
+    --font: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+    --font-display: var(--font);
+    --display-weight: 900;
+    --rule: 2px;
+    color-scheme: dark;
+  }
+  /* amber phosphor terminal */
+  :root[data-style="crt"] {
+    --ground: #140d02;
+    --ground-2: #1c1305;
+    --text: #ffb547;
+    --muted: #b5813a;
+    --a1: #ffe2a0;
+    --a2: #6b4410;
+    --font: 'JetBrains Mono', 'Noto Sans TC', ui-monospace, monospace;
+    --display-weight: 700;
+    --rule: 1px;
+  }
+  /* street neon signage at night */
+  :root[data-style="neon"] {
+    --ground: #0f1424;
+    --ground-2: #131a2f;
+    --text: #eef0ff;
+    --muted: #8a90b8;
+    --a1: #ff4d5e;
+    --a2: #4df0ff;
+    --font-display: 'Tilt Neon', 'Noto Sans TC', sans-serif;
+    --display-weight: 400;
+  }
+  /* chalk on slate, like the hand sketch */
+  :root[data-style="chalk"] {
+    --ground: #1f2b25;
+    --ground-2: #1f2b25;
+    --text: #ecebe4;
+    --muted: #a3ada5;
+    --a1: #f6d55c;
+    --a2: #8fd3f4;
+    --font: 'LXGW WenKai TC', 'Noto Sans TC', sans-serif;
+    --display-weight: 700;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    background: var(--ground);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 16px;
+    line-height: 1.7;
+  }
+  /* surface texture: riso grain by default */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    pointer-events: none;
+    opacity: .18;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  [data-style="crt"] body {
+    text-shadow: 0 0 6px color-mix(in srgb, var(--text) 45%, transparent);
+  }
+  [data-style="crt"] body::after {
+    opacity: .5;
+    mix-blend-mode: multiply;
+    background-image: repeating-linear-gradient(to bottom, transparent 0 2px, rgb(0 0 0 / .55) 2px 3px);
+  }
+  [data-style="neon"] body::after { display: none; }
+  [data-style="chalk"] body::after { opacity: .1; mix-blend-mode: soft-light; }
+
+  a { color: inherit; text-decoration: none; }
+  a:focus-visible, button:focus-visible {
+    outline: 3px solid var(--a1);
+    outline-offset: 4px;
+  }
+
+  .page {
+    height: 100vh;
+    height: 100svh;
+    max-width: 80rem;
+    margin: 0 auto;
+    padding-inline: clamp(16px, 4vw, 48px);
+    padding-block: clamp(20px, 4vh, 48px);
+    display: grid;
+    grid-template-columns: minmax(14rem, 1fr) minmax(0, 1.7fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: clamp(1.5rem, 4vh, 3rem) clamp(2rem, 5vw, 5rem);
+  }
+
+  /* ---------- top: handle + contact ---------- */
+  .top {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+  }
+  h1 {
+    position: relative;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 9vw, 7.5rem);
+    font-weight: var(--display-weight);
+    line-height: .95;
+    letter-spacing: -.035em;
+  }
+  h1 .ink {
+    display: block;
+    color: var(--a1);
+    mix-blend-mode: screen;
+  }
+  h1 .ink + .ink {
+    position: absolute;
+    inset: 0;
+    color: var(--a2);
+    animation: misregister 900ms cubic-bezier(.2, .7, .2, 1) 250ms both;
+  }
+  @keyframes misregister {
+    from { transform: translate(0, 0); }
+    to { transform: translate(.04em, .03em); }
+  }
+  [data-style] h1 .ink + .ink { display: none; }
+  [data-style] h1 .ink { mix-blend-mode: normal; }
+
+  [data-style="crt"] h1 { letter-spacing: -.02em; font-size: clamp(2rem, 7vw, 5.5rem); }
+  [data-style="crt"] h1 .ink { display: inline; color: var(--a1); }
+  [data-style="crt"] h1::after {
+    content: '\2588';
+    margin-left: .15em;
+    font-size: .6em;
+    vertical-align: .15em;
+    color: var(--text);
+    animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  [data-style="neon"] h1 { letter-spacing: 0; }
+  [data-style="neon"] h1 .ink {
+    color: #e9feff;
+    text-shadow: 0 0 4px var(--a2), 0 0 14px var(--a2), 0 0 40px var(--a2);
+    animation: ignite 1400ms linear 200ms both;
+  }
+  @keyframes ignite {
+    0%, 8%, 14%, 22% { opacity: .15; }
+    10%, 18%, 26%, 100% { opacity: 1; }
+  }
+  [data-style="chalk"] h1 { letter-spacing: 0; }
+  [data-style="chalk"] h1 .ink { color: var(--text); }
+
+  .contact {
+    display: flex;
+    gap: .5rem;
+    margin: 0 0 .4rem;
+    padding: 0;
+    list-style: none;
+  }
+  .contact a {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: var(--rule) solid var(--text);
+    color: var(--text);
+    transition: transform 140ms ease, box-shadow 140ms ease, background-color 140ms ease, color 140ms ease;
+  }
+  .contact a:hover {
+    background: var(--a1);
+    color: var(--ground);
+    border-color: var(--a1);
+    transform: translate(-3px, -3px);
+    box-shadow: 3px 3px 0 var(--a2);
+  }
+  .contact svg { width: 1.25rem; height: 1.25rem; }
+  [data-style="crt"] .contact a:hover { transform: none; box-shadow: none; background: var(--text); border-color: var(--text); }
+  [data-style="neon"] .contact a {
+    border-color: var(--a2);
+    border-radius: 12px;
+    color: var(--a2);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--a2) 50%, transparent), inset 0 0 8px color-mix(in srgb, var(--a2) 35%, transparent);
+  }
+  [data-style="neon"] .contact a:hover {
+    transform: none;
+    background: transparent;
+    color: var(--a1);
+    border-color: var(--a1);
+    box-shadow: 0 0 12px var(--a1), inset 0 0 8px color-mix(in srgb, var(--a1) 45%, transparent);
+  }
+  [data-style="chalk"] .contact a { filter: url(#rough); }
+  [data-style="chalk"] .contact a:hover { transform: none; box-shadow: none; background: transparent; color: var(--a1); border-color: var(--a1); }
+
+  .section-label {
+    margin: 0 0 1rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--a1);
+  }
+  [data-style="crt"] .section-label::before { content: '## '; }
+  [data-style="neon"] .section-label { text-shadow: 0 0 8px var(--a1); }
+
+  /* ---------- left: projects ---------- */
+  .projects { min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+  .projects .all-projects { align-self: flex-start; }
+  .projects ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: .25rem;
+  }
+  .projects li a {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    column-gap: .5rem;
+    padding: .6rem 0;
+  }
+  .arrow {
+    grid-row: 1 / span 2;
+    font-size: 1.5rem;
+    font-weight: 900;
+    line-height: 1.3;
+    color: var(--a2);
+    transition: transform 160ms ease, color 160ms ease;
+  }
+  .p-name {
+    font-family: var(--font-display);
+    font-size: clamp(1.375rem, 2.4vw, 1.875rem);
+    font-weight: var(--display-weight);
+    line-height: 1.25;
+    justify-self: start;
+  }
+  .p-desc { color: var(--muted); font-size: .95rem; }
+  .projects li a:hover .arrow,
+  .projects li a:focus-visible .arrow { transform: translateX(6px); color: var(--a1); }
+  .projects li a:hover .p-name,
+  .projects li a:focus-visible .p-name {
+    color: var(--ground);
+    background: var(--a1);
+    box-shadow: .15em 0 0 var(--a1), -.15em 0 0 var(--a1);
+  }
+  .all-projects {
+    display: inline-block;
+    margin-top: 1rem;
+    color: var(--muted);
+    border-bottom: var(--rule) solid currentColor;
+  }
+  .all-projects:hover { color: var(--text); }
+
+  [data-style="crt"] .arrow { color: var(--muted); font-size: 0; }
+  [data-style="crt"] .arrow::before { content: '>'; font-size: 1.25rem; }
+  [data-style="crt"] .projects li a:hover .p-name { text-shadow: none; }
+  [data-style="neon"] .p-name { font-size: clamp(1.5rem, 2.6vw, 2rem); }
+  [data-style="neon"] .arrow { color: var(--a2); text-shadow: 0 0 8px var(--a2); }
+  [data-style="neon"] .projects li a:hover .p-name,
+  [data-style="neon"] .projects li a:focus-visible .p-name {
+    background: none;
+    box-shadow: none;
+    color: #fff;
+    text-shadow: 0 0 6px var(--a1), 0 0 18px var(--a1);
+  }
+  [data-style="chalk"] .projects li a:hover .p-name,
+  [data-style="chalk"] .projects li a:focus-visible .p-name {
+    background: none;
+    box-shadow: none;
+    color: var(--a1);
+    text-decoration: underline wavy var(--a1) 2px;
+    text-underline-offset: .25em;
+  }
+
+  /* ---------- right: article reel ---------- */
+  .articles {
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .reel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+  }
+  .reel-count { color: var(--muted); font-size: .9rem; font-variant-numeric: tabular-nums; }
+  .frame { position: relative; flex: 1; min-height: 0; }
+  /* decorative layer behind the reel: riso = off-register blue plate */
+  .frame::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translate(8px, 8px);
+    background: var(--a2);
+    mix-blend-mode: screen;
+  }
+  .reel {
+    position: relative;
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+    background: var(--ground-2);
+    border: var(--rule) solid var(--text);
+  }
+  .reel::-webkit-scrollbar { display: none; }
+  .reel ol { margin: 0; padding: 0; list-style: none; }
+  .reel li + li { border-top: var(--rule) solid color-mix(in srgb, var(--text) 16%, transparent); }
+  .reel a {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: .25rem 1.5rem;
+    padding: 1.25rem clamp(1rem, 2.5vw, 1.75rem);
+  }
+  .a-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+    font-weight: var(--display-weight);
+    line-height: 1.3;
+    justify-self: start;
+    text-wrap: balance;
+  }
+  .a-date {
+    color: var(--muted);
+    font-size: .9rem;
+    font-variant-numeric: tabular-nums;
+    padding-top: .35rem;
+    white-space: nowrap;
+  }
+  .a-desc { grid-column: 1; margin: 0; color: var(--muted); max-width: 36em; }
+  .a-tags { grid-column: 1; display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .35rem; }
+  .a-tags span {
+    padding: 0 .5rem;
+    font-size: .8rem;
+    font-weight: 700;
+    color: var(--ground);
+    background: var(--a2);
+  }
+  .reel a:hover .a-title,
+  .reel a:focus-visible .a-title {
+    color: var(--ground);
+    background: var(--a1);
+    box-shadow: .15em 0 0 var(--a1), -.15em 0 0 var(--a1);
+  }
+  .reel a:focus-visible { outline-offset: -4px; }
+
+  [data-style="crt"] .frame::before { display: none; }
+  [data-style="crt"] .a-tags span { background: none; color: var(--muted); border: 1px solid var(--muted); font-weight: 400; }
+  [data-style="crt"] .reel a:hover .a-title { text-shadow: none; }
+
+  [data-style="neon"] .frame::before { display: none; }
+  [data-style="neon"] .reel {
+    border-color: var(--a1);
+    border-radius: 18px;
+    box-shadow: 0 0 14px color-mix(in srgb, var(--a1) 55%, transparent), inset 0 0 14px color-mix(in srgb, var(--a1) 30%, transparent);
+  }
+  [data-style="neon"] .a-title { font-size: clamp(1.375rem, 2.4vw, 1.875rem); }
+  [data-style="neon"] .a-tags span {
+    background: none;
+    color: var(--a2);
+    border: 1px solid var(--a2);
+    border-radius: 999px;
+    font-weight: 400;
+  }
+  [data-style="neon"] .reel a:hover .a-title,
+  [data-style="neon"] .reel a:focus-visible .a-title {
+    background: none;
+    box-shadow: none;
+    color: #fff;
+    text-shadow: 0 0 6px var(--a2), 0 0 18px var(--a2);
+  }
+
+  [data-style="chalk"] .frame::before {
+    transform: none;
+    background: none;
+    mix-blend-mode: normal;
+    border: 2px solid var(--text);
+    filter: url(#rough);
+  }
+  [data-style="chalk"] .reel { border: 0; background: transparent; }
+  [data-style="chalk"] .reel li + li { border-top-style: dashed; }
+  [data-style="chalk"] .a-tags span { background: none; color: var(--a2); padding: 0; font-weight: 400; }
+  [data-style="chalk"] .a-tags span::before { content: '#'; }
+  [data-style="chalk"] .reel a:hover .a-title,
+  [data-style="chalk"] .reel a:focus-visible .a-title {
+    background: none;
+    box-shadow: none;
+    color: var(--a1);
+    text-decoration: underline wavy var(--a1) 2px;
+    text-underline-offset: .25em;
+  }
+
+  /* ---------- article scroll gauge ---------- */
+  .gauge {
+    align-self: center;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    margin-top: 1.25rem;
+    padding: .25rem .5rem;
+    border: 0;
+    background: none;
+    color: var(--muted);
+    font: inherit;
+    font-size: .875rem;
+    cursor: pointer;
+  }
+  .gauge svg { width: 9rem; height: 1rem; overflow: visible; }
+  .gauge path { fill: none; stroke-width: 3; stroke-linecap: round; }
+  .gauge .track { stroke: color-mix(in srgb, var(--text) 20%, transparent); }
+  .gauge .fill {
+    stroke: var(--a1);
+    stroke-dasharray: 1;
+    stroke-dashoffset: .6;
+    transition: stroke-dashoffset 120ms linear;
+  }
+  .gauge:hover .fill { stroke: var(--text); }
+  .gauge[data-end] { cursor: default; }
+  .gauge-ascii { display: none; white-space: pre; color: var(--text); }
+  [data-style="crt"] .gauge svg { display: none; }
+  [data-style="crt"] .gauge-ascii { display: inline; }
+  [data-style="neon"] .gauge .fill { filter: drop-shadow(0 0 4px var(--a1)); }
+  [data-style="chalk"] .gauge svg { filter: url(#rough); }
+
+  /* ---------- pinned stages: 100vh on screen, 300vh of scroll ---------- */
+  .pinned { position: relative; height: 400vh; }
+  .stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: clamp(1rem, 3vh, 2rem);
+    padding-block: clamp(20px, 5vh, 48px);
+    border-top: var(--rule) solid var(--text);
+  }
+  [data-style="neon"] .stage { border-top-color: var(--a2); box-shadow: inset 0 10px 18px -12px var(--a2); }
+  [data-style="chalk"] .stage { border-top-style: dashed; }
+  .stage-head {
+    width: 100%;
+    max-width: 80rem;
+    margin: 0 auto;
+    padding-inline: clamp(16px, 4vw, 48px);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .stage-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 6vw, 4.5rem);
+    font-weight: var(--display-weight);
+    line-height: 1;
+    letter-spacing: -.02em;
+  }
+  [data-style="crt"] .stage-title::before { content: '$ cd '; color: var(--muted); }
+  [data-style="neon"] .stage-title { color: #fff; text-shadow: 0 0 6px var(--a1), 0 0 22px var(--a1); }
+  .stage-step { color: var(--muted); font-size: .95rem; font-variant-numeric: tabular-nums; }
+
+  /* Projects stage: horizontal strip driven by vertical scroll */
+  .strip-window { min-height: 0; display: flex; align-items: center; }
+  .strip {
+    display: flex;
+    gap: clamp(1rem, 3vw, 2rem);
+    padding-inline: clamp(16px, 4vw, 48px);
+    will-change: transform;
+  }
+  .slab {
+    position: relative;
+    flex: none;
+    width: min(70vw, 34rem);
+    height: min(56svh, 26rem);
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    padding: clamp(1.25rem, 3vw, 2rem);
+    color: var(--ground);
+    background-color: var(--a1);
+    background-image: radial-gradient(rgb(28 21 48 / .28) 1.2px, transparent 1.6px);
+    background-size: 7px 7px;
+  }
+  .slab:nth-child(even) { background-color: var(--a2); color: var(--text); }
+  .slab-year { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .slab-name {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: var(--display-weight);
+    line-height: 1.05;
+  }
+  .slab-desc { margin: 0; max-width: 24em; font-weight: 700; }
+  .slab-tags { margin-top: auto; font-size: .95rem; }
+
+  [data-style="crt"] .slab,
+  [data-style="crt"] .slab:nth-child(even) {
+    background: var(--ground-2);
+    color: var(--text);
+    border: 1px solid var(--text);
+  }
+  [data-style="crt"] .slab-name { color: var(--a1); }
+  [data-style="crt"] .slab-desc { font-weight: 400; }
+  [data-style="neon"] .slab,
+  [data-style="neon"] .slab:nth-child(even) {
+    background: var(--ground-2);
+    color: var(--text);
+    border: 2px solid var(--a1);
+    border-radius: 22px;
+    box-shadow: 0 0 16px color-mix(in srgb, var(--a1) 50%, transparent), inset 0 0 16px color-mix(in srgb, var(--a1) 25%, transparent);
+  }
+  [data-style="neon"] .slab:nth-child(even) {
+    border-color: var(--a2);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--a2) 50%, transparent), inset 0 0 16px color-mix(in srgb, var(--a2) 25%, transparent);
+  }
+  [data-style="neon"] .slab-name { color: #fff; text-shadow: 0 0 8px var(--a1), 0 0 24px var(--a1); }
+  [data-style="neon"] .slab:nth-child(even) .slab-name { text-shadow: 0 0 8px var(--a2), 0 0 24px var(--a2); }
+  [data-style="neon"] .slab-desc { font-weight: 400; color: var(--muted); }
+  [data-style="chalk"] .slab,
+  [data-style="chalk"] .slab:nth-child(even) { background: none; color: var(--text); }
+  [data-style="chalk"] .slab::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 2px solid var(--text);
+    filter: url(#rough);
+  }
+  [data-style="chalk"] .slab-name { color: var(--a1); }
+  [data-style="chalk"] .slab:nth-child(even) .slab-name { color: var(--a2); }
+  [data-style="chalk"] .slab-desc { font-weight: 400; }
+
+  /* Interests stage: stepped cards swapped by scroll */
+  .deck {
+    position: relative;
+    min-height: 0;
+    width: 100%;
+    max-width: 80rem;
+    margin: 0 auto;
+  }
+  .card {
+    position: absolute;
+    inset: 0 clamp(16px, 4vw, 48px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 300ms ease, visibility 0s 300ms;
+  }
+  .card.is-active { opacity: 1; visibility: visible; transition: opacity 300ms ease; }
+  .card-word {
+    position: relative;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 14vw, 11rem);
+    font-weight: var(--display-weight);
+    line-height: 1;
+    letter-spacing: -.03em;
+  }
+  .card-word .ink { display: block; color: var(--a1); mix-blend-mode: screen; }
+  .card-word .ink + .ink { position: absolute; inset: 0; color: var(--a2); transform: translate(.035em, .025em); }
+  [data-style] .card-word .ink + .ink { display: none; }
+  [data-style] .card-word .ink { mix-blend-mode: normal; }
+  [data-style="crt"] .card-word .ink { color: var(--a1); }
+  [data-style="neon"] .card-word { letter-spacing: 0; }
+  [data-style="neon"] .card-word .ink { color: #fff; text-shadow: 0 0 6px var(--a1), 0 0 24px var(--a1), 0 0 60px var(--a1); }
+  [data-style="neon"] .card:nth-child(even) .card-word .ink { text-shadow: 0 0 6px var(--a2), 0 0 24px var(--a2), 0 0 60px var(--a2); }
+  [data-style="chalk"] .card-word { letter-spacing: 0; }
+  [data-style="chalk"] .card-word .ink { color: var(--text); }
+  .card-note { margin: 0; max-width: 30em; color: var(--muted); font-size: clamp(1rem, 1.6vw, 1.25rem); }
+
+  /* ---------- page progress rail ---------- */
+  .rail {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 16px);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+    right: 6px;
+    width: 4px;
+    z-index: 10;
+    background: color-mix(in srgb, var(--text) 16%, transparent);
+  }
+  .rail-fill {
+    position: absolute;
+    inset: 0;
+    transform-origin: top;
+    transform: scaleY(0);
+    background: var(--a1);
+    box-shadow: 2px 2px 0 var(--a2);
+  }
+  .rail-mark {
+    position: absolute;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    padding: 0;
+    border: 2px solid var(--text);
+    background: var(--ground);
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+  }
+  .rail-mark:nth-of-type(1) { top: 0%; }
+  .rail-mark:nth-of-type(2) { top: 33.333%; }
+  .rail-mark:nth-of-type(3) { top: 66.667%; }
+  .rail-mark.is-passed { background: var(--a1); border-color: var(--a1); }
+  .rail-mark::after {
+    content: attr(data-label);
+    position: absolute;
+    right: calc(100% + 8px);
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0 .4rem;
+    white-space: nowrap;
+    font-size: .8rem;
+    font-weight: 700;
+    color: var(--ground);
+    background: var(--text);
+    text-shadow: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 120ms ease;
+  }
+  .rail-mark:hover::after, .rail-mark:focus-visible::after { opacity: 1; }
+  [data-style="crt"] .rail-fill { background: var(--text); box-shadow: none; }
+  [data-style="neon"] .rail-fill { background: var(--a2); box-shadow: 0 0 10px var(--a2); }
+  [data-style="neon"] .rail-mark { border-radius: 50%; border-color: var(--a2); }
+  [data-style="neon"] .rail-mark.is-passed { background: var(--a2); border-color: var(--a2); box-shadow: 0 0 10px var(--a2); }
+  [data-style="chalk"] .rail-fill { background: var(--text); box-shadow: none; filter: url(#rough); }
+  [data-style="chalk"] .rail-mark { filter: url(#rough); }
+
+  /* ---------- style switcher ---------- */
+  .styles {
+    position: fixed;
+    left: 12px;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+    z-index: 60;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 4px;
+    background: var(--ground);
+    border: 1px solid color-mix(in srgb, var(--text) 30%, transparent);
+    text-shadow: none;
+  }
+  .styles button {
+    padding: .3rem .7rem;
+    border: 0;
+    background: none;
+    color: var(--muted);
+    font: inherit;
+    font-size: .8rem;
+    cursor: pointer;
+  }
+  .styles button[aria-pressed="true"] { background: var(--text); color: var(--ground); }
+  .styles .group-label { align-self: center; padding: 0 .3rem 0 .6rem; color: var(--muted); font-size: .75rem; }
+  .styles .sep { width: 1px; margin: 2px 4px; background: color-mix(in srgb, var(--text) 30%, transparent); }
+
+  /* ---------- riso press animation frame (movable between slots) ---------- */
+  .anim-slot { display: flex; min-height: 0; }
+  .anim-slot[hidden] { display: none; }
+  .anim-slot[data-slot="left"] { flex: 1; min-height: 0; margin-top: clamp(1rem, 3vh, 2rem); }
+  .anim-slot[data-slot="right"] { flex: 0 0 38%; min-height: 9rem; margin-bottom: 1.5rem; }
+  .press {
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+  }
+  .press canvas {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    display: block;
+    background: var(--ground-2);
+  }
+  .press figcaption { color: var(--muted); font-size: .8rem; }
+
+  /* ---------- small screens ---------- */
+  @media (max-width: 760px) {
+    .page {
+      height: auto;
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: none;
+    }
+    .frame { flex: none; height: 62svh; }
+    .contact { margin: 0; }
+    .anim-slot[data-slot] { flex: none; height: 15rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    h1 .ink + .ink { animation: none; transform: translate(.04em, .03em); }
+    [data-style="crt"] h1::after, [data-style="neon"] h1 .ink { animation: none; }
+    .arrow, .contact a, .gauge .fill, .card, .card.is-active { transition: none; }
+  }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <filter id="rough">
+    <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/>
+    <feDisplacementMap in="SourceGraphic" scale="4"/>
+  </filter>
+</svg>
+
+<div class="page">
+  <header class="top">
+    <h1 aria-label="@Lun-hackin">
+      <span class="ink" aria-hidden="true">@Lun-hackin</span>
+      <span class="ink" aria-hidden="true">@Lun-hackin</span>
+    </h1>
+    <ul class="contact" aria-label="聯絡方式">
+      <li><a href="#" aria-label="GitHub" title="GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.82 1.19 3.08 0 4.41-2.69 5.38-5.26 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+      </a></li>
+      <li><a href="#" aria-label="X" title="X">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.75 2h3.1l-6.77 7.74L22 22h-6.23l-4.88-6.38L5.3 22H2.2l7.24-8.28L1.8 2h6.39l4.41 5.83L17.75 2Zm-1.09 18.13h1.72L7.43 3.77H5.59l11.07 16.36Z"/></svg>
+      </a></li>
+      <li><a href="#" aria-label="Email" title="Email">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14"/><path d="m3 6 9 7 9-7"/></svg>
+      </a></li>
+      <li><a href="#" aria-label="RSS 訂閱" title="RSS">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="19" r="2.5"/><path d="M2.5 9.5v3a9 9 0 0 1 9 9h3a12 12 0 0 0-12-12Z"/><path d="M2.5 3v3a15.5 15.5 0 0 1 15.5 15.5h3A18.5 18.5 0 0 0 2.5 3Z"/></svg>
+      </a></li>
+    </ul>
+  </header>
+
+  <nav class="projects" aria-labelledby="projects-label">
+    <h2 class="section-label" id="projects-label">作品</h2>
+    <ul>
+      <li><a href="#projects">
+        <span class="arrow" aria-hidden="true">→</span>
+        <span class="p-name">sup_wallet</span>
+        <span class="p-desc">Sui Move 錢包合約</span>
+      </a></li>
+      <li><a href="#projects">
+        <span class="arrow" aria-hidden="true">→</span>
+        <span class="p-name">Lun-hackin</span>
+        <span class="p-desc">這個網站，Astro + React + Vue</span>
+      </a></li>
+      <li><a href="#projects">
+        <span class="arrow" aria-hidden="true">→</span>
+        <span class="p-name">互動實驗室</span>
+        <span class="p-desc">小型前端互動 demo</span>
+      </a></li>
+      <li><a href="#projects">
+        <span class="arrow" aria-hidden="true">→</span>
+        <span class="p-name">Move 範例集</span>
+        <span class="p-desc">常用合約模式的最小範例</span>
+      </a></li>
+    </ul>
+    <a class="all-projects" href="#projects">所有作品</a>
+    <div class="anim-slot" data-slot="left"><figure class="press" id="press">
+      <canvas aria-label="孔版網點動畫：粉紅與藍色兩層網點，會隨游標鼓起並錯位" role="img"></canvas>
+      <figcaption>移動游標，藍色版會被拖開。</figcaption>
+    </figure></div>
+  </nav>
+
+  <section class="articles" aria-labelledby="articles-label">
+    <div class="reel-head">
+      <h2 class="section-label" id="articles-label">文章</h2>
+      <span class="reel-count">8 篇</span>
+    </div>
+    <div class="anim-slot" data-slot="right" hidden></div>
+    <div class="frame">
+      <div class="reel" id="reel" tabindex="0" aria-label="文章列表，可捲動">
+        <ol>
+          <li><a href="#">
+            <span class="a-title">Hello World</span>
+            <time class="a-date" datetime="2026-10-14">2026.10.14</time>
+            <p class="a-desc">第一篇文章，順便測試 React 和 Vue 元件能不能放在同一頁。</p>
+            <span class="a-tags"><span>meta</span></span>
+          </a></li>
+          <li><a href="#">
+            <span class="a-title">在 Sui 上寫錢包合約學到的事</span>
+            <time class="a-date" datetime="2026-09-28">2026.09.28</time>
+            <p class="a-desc">Move 的物件模型和 Solidity 很不一樣，記下幾個踩過的坑。</p>
+            <span class="a-tags"><span>Move</span><span>Sui</span></span>
+          </a></li>
+          <li><a href="#">
+            <span class="a-title">為什麼這個網站選 Astro</span>
+            <time class="a-date" datetime="2026-09-10">2026.09.10</time>
+            <p class="a-desc">內容為主、元件按需載入，剛好符合部落格加作品集的需求。</p>
+            <span class="a-tags"><span>Astro</span></span>
+          </a></li>
+          <li><a href="#">
+            <span class="a-title">同一個專案混用 React 和 Vue</span>
+            <time class="a-date" datetime="2026-08-22">2026.08.22</time>
+            <p class="a-desc">Islands 架構下兩個框架怎麼共存，以及什麼時候不該這樣做。</p>
+            <span class="a-tags"><span>React</span><span>Vue</span></span>
+          </a></li>
+          <li><a href="#">
+            <span class="a-title">用物件表示權限：Move 的 capability 模式</span>
+            <time class="a-date" datetime="2026-08-03">2026.08.03</time>
+            <p class="a-desc">把權限做成可以持有、轉移的物件，比檢查呼叫者地址更容易推理。</p>
+            <span class="a-tags"><span>Move</span></span>
+          </a></li>
+          <li><a href="#">
+            <span class="a-title">把設計稿拆成元件的順序</span>
+            <time class="a-date" datetime="2026-07-19">2026.07.19</time>
+            <p class="a-desc">先拆資料，再拆版面，最後才拆樣式。順序反過來通常要重寫。</p>
+            <span class="a-tags"><span>前端</span></span>
+          </a></li>
+          <li><a href="#">
+            <span class="a-title">測合約時我會先寫的三種 case</span>
+            <time class="a-date" datetime="2026-07-02">2026.07.02</time>
+            <p class="a-desc">正常路徑、權限不足、邊界數值。三種都過了才開始想別的。</p>
+            <span class="a-tags"><span>測試</span><span>Move</span></span>
+          </a></li>
+          <li><a href="#">
+            <span class="a-title">孔版印刷的配色怎麼搬上螢幕</span>
+            <time class="a-date" datetime="2026-06-15">2026.06.15</time>
+            <p class="a-desc">螢光油墨在 RGB 裡不存在，只能靠混色模式去逼近套印的感覺。</p>
+            <span class="a-tags"><span>設計</span></span>
+          </a></li>
+        </ol>
+      </div>
+    </div>
+    <button class="gauge" id="gauge" type="button" aria-controls="reel">
+      <svg viewBox="0 0 144 16" aria-hidden="true">
+        <path class="track" d="M2 8 Q8 1 14 8 T26 8 T38 8 T50 8 T62 8 T74 8 T86 8 T98 8 T110 8 T122 8 T134 8 T142 8"/>
+        <path class="fill" pathLength="1" d="M2 8 Q8 1 14 8 T26 8 T38 8 T50 8 T62 8 T74 8 T86 8 T98 8 T110 8 T122 8 T134 8 T142 8"/>
+      </svg>
+      <span class="gauge-ascii" id="gauge-ascii" aria-hidden="true">[######------]</span>
+      <span id="gauge-label">往下捲還有更多</span>
+    </button>
+  </section>
+</div>
+
+<section class="pinned" id="projects" aria-labelledby="projects-title">
+  <div class="stage">
+    <div class="stage-head">
+      <h2 class="stage-title" id="projects-title">作品</h2>
+      <span class="stage-step" data-step>1 / 4</span>
+    </div>
+    <div class="strip-window">
+      <div class="strip">
+        <article class="slab">
+          <span class="slab-year">2026</span>
+          <h3 class="slab-name">sup_wallet</h3>
+          <p class="slab-desc">Sui Move 錢包合約，處理資產託管與授權。</p>
+          <span class="slab-tags">Move、Sui</span>
+        </article>
+        <article class="slab">
+          <span class="slab-year">2026</span>
+          <h3 class="slab-name">Lun-hackin</h3>
+          <p class="slab-desc">這個網站。Astro 搭配 React 與 Vue 元件。</p>
+          <span class="slab-tags">Astro、React、Vue</span>
+        </article>
+        <article class="slab">
+          <span class="slab-year">2026</span>
+          <h3 class="slab-name">互動實驗室</h3>
+          <p class="slab-desc">小型前端互動 demo 的收集處。</p>
+          <span class="slab-tags">React、Vue</span>
+        </article>
+        <article class="slab">
+          <span class="slab-year">2026</span>
+          <h3 class="slab-name">Move 範例集</h3>
+          <p class="slab-desc">常用合約模式的最小範例，每個都附測試。</p>
+          <span class="slab-tags">Move</span>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pinned" id="interests" aria-labelledby="interests-title">
+  <div class="stage">
+    <div class="stage-head">
+      <h2 class="stage-title" id="interests-title">興趣</h2>
+      <span class="stage-step" data-step>1 / 3</span>
+    </div>
+    <div class="deck">
+      <div class="card is-active">
+        <p class="card-word" aria-label="智能合約"><span class="ink" aria-hidden="true">智能合約</span><span class="ink" aria-hidden="true">智能合約</span></p>
+        <p class="card-note">Move 和 Sui 的物件模型。怎麼讓權限和資產的流向一眼就看得懂。</p>
+      </div>
+      <div class="card">
+        <p class="card-word" aria-label="介面"><span class="ink" aria-hidden="true">介面</span><span class="ink" aria-hidden="true">介面</span></p>
+        <p class="card-note">React、Vue 和那些讓操作感覺順手的小細節。</p>
+      </div>
+      <div class="card">
+        <p class="card-word" aria-label="印刷"><span class="ink" aria-hidden="true">印刷</span><span class="ink" aria-hidden="true">印刷</span></p>
+        <p class="card-note">孔版、網點、套印錯位。這個網站的配色就是從這裡來的。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<nav class="rail" aria-label="頁面進度">
+  <div class="rail-fill" id="rail-fill"></div>
+  <button class="rail-mark" type="button" data-target="top" data-label="首頁" aria-label="回到首頁"></button>
+  <button class="rail-mark" type="button" data-target="projects" data-label="作品" aria-label="跳到作品"></button>
+  <button class="rail-mark" type="button" data-target="interests" data-label="興趣" aria-label="跳到興趣"></button>
+</nav>
+
+<div class="styles" role="group" aria-label="切換風格">
+  <button type="button" data-style-id="riso" aria-pressed="true">孔版</button>
+  <button type="button" data-style-id="crt" aria-pressed="false">終端機</button>
+  <button type="button" data-style-id="neon" aria-pressed="false">霓虹</button>
+  <button type="button" data-style-id="chalk" aria-pressed="false">粉筆</button>
+  <span class="sep" aria-hidden="true"></span>
+  <span class="group-label" id="press-label">動畫</span>
+  <button type="button" data-slot-id="left" aria-pressed="true">左欄</button>
+  <button type="button" data-slot-id="right" aria-pressed="false">右欄</button>
+  <button type="button" data-slot-id="off" aria-pressed="false">關閉</button>
+</div>
+
+<script>
+  (() => {
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+    const root = document.documentElement;
+
+    /* ---- article reel gauge ---- */
+    const reel = document.getElementById('reel');
+    const gauge = document.getElementById('gauge');
+    const gaugeFill = gauge.querySelector('.fill');
+    const ascii = document.getElementById('gauge-ascii');
+    const gaugeLabel = document.getElementById('gauge-label');
+
+    function updateGauge() {
+      const max = reel.scrollHeight - reel.clientHeight;
+      // counts what is already visible, so the gauge is partly filled at rest
+      const seen = max <= 0 ? 1 : Math.min(1, (reel.scrollTop + reel.clientHeight) / reel.scrollHeight);
+      gaugeFill.style.strokeDashoffset = String(1 - seen);
+      const cells = 12;
+      const on = Math.round(seen * cells);
+      ascii.textContent = `[${'#'.repeat(on)}${'-'.repeat(cells - on)}]`;
+      const atEnd = max - reel.scrollTop < 4;
+      gauge.toggleAttribute('data-end', atEnd);
+      gaugeLabel.textContent = atEnd ? '已經到底了' : '往下捲還有更多';
+    }
+    gauge.addEventListener('click', () => {
+      reel.scrollBy({ top: reel.clientHeight * 0.8, behavior: reduce.matches ? 'auto' : 'smooth' });
+    });
+    reel.addEventListener('scroll', updateGauge, { passive: true });
+
+    /* ---- page rail: equal segments, real progress inside each ---- */
+    const railFill = document.getElementById('rail-fill');
+    const marks = [...document.querySelectorAll('.rail-mark')];
+    const [proj, intr] = document.querySelectorAll('.pinned');
+    const strip = proj.querySelector('.strip');
+    const cards = [...intr.querySelectorAll('.card')];
+
+    const maxScroll = () => root.scrollHeight - innerHeight;
+    const starts = () => [0, proj.offsetTop, intr.offsetTop, maxScroll()];
+    const targetTop = (m) => (m.dataset.target === 'top' ? 0 : document.getElementById(m.dataset.target).offsetTop);
+
+    function railProgress(y) {
+      const s = starts();
+      const segs = s.length - 1;
+      for (let i = 0; i < segs; i++) {
+        if (y < s[i + 1] || i === segs - 1) {
+          const len = s[i + 1] - s[i];
+          const frac = len <= 0 ? 1 : Math.min(1, Math.max(0, (y - s[i]) / len));
+          return { value: (i + frac) / segs, index: i };
+        }
+      }
+      return { value: 1, index: segs - 1 };
+    }
+
+    // local progress 0..1 across a pinned section's 300vh of extra scroll
+    const localProgress = (sec) => {
+      const span = sec.offsetHeight - innerHeight;
+      return Math.min(1, Math.max(0, (scrollY - sec.offsetTop) / span));
+    };
+
+    let ticking = false;
+    function frame() {
+      ticking = false;
+      const y = scrollY;
+      const rail = railProgress(y);
+      railFill.style.transform = `scaleY(${rail.value})`;
+      marks.forEach((m, i) => m.classList.toggle('is-passed', i <= rail.index && y >= targetTop(m) - 2));
+
+      const pp = localProgress(proj);
+      const travel = strip.scrollWidth - strip.parentElement.clientWidth;
+      strip.style.transform = `translateX(${-pp * Math.max(0, travel)}px)`;
+      const slabs = strip.children.length;
+      proj.querySelector('[data-step]').textContent = `${Math.min(slabs, Math.floor(pp * slabs) + 1)} / ${slabs}`;
+
+      const ip = localProgress(intr);
+      const idx = Math.min(cards.length - 1, Math.floor(ip * cards.length));
+      cards.forEach((c, i) => c.classList.toggle('is-active', i === idx));
+      intr.querySelector('[data-step]').textContent = `${idx + 1} / ${cards.length}`;
+    }
+    const request = () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } };
+
+    marks.forEach((m) => m.addEventListener('click', () => {
+      scrollTo({ top: targetTop(m), behavior: reduce.matches ? 'auto' : 'smooth' });
+    }));
+    addEventListener('scroll', request, { passive: true });
+    addEventListener('resize', () => { request(); updateGauge(); });
+
+    /* ---- riso press: two halftone screens; pointer swells the dots and drags the blue plate ---- */
+    const press = document.getElementById('press');
+    const canvas = press.querySelector('canvas');
+    const ctx = canvas.getContext('2d');
+    const SPACING = 9;
+    const REST = { x: 3, y: 2 };
+    const plate = { x: REST.x, y: REST.y, vx: 0, vy: 0 };
+    const pointer = { x: -9999, y: -9999 };
+    let W = 0, H = 0, dpr = 1, inks = {};
+    let lastX = null, lastY = null;
+
+    function readInks() {
+      const cs = getComputedStyle(root);
+      inks = {
+        a: cs.getPropertyValue('--a1').trim(),
+        b: cs.getPropertyValue('--a2').trim(),
+        paper: cs.getPropertyValue('--ground-2').trim(),
+      };
+    }
+
+    function field(x, y, t, phase) {
+      const v = 0.5
+        + 0.26 * Math.sin(x * 0.017 + t * 0.6 + phase + Math.sin(y * 0.011 + t * 0.3) * 2)
+        + 0.24 * Math.cos(y * 0.021 - t * 0.45 + x * 0.004 + phase);
+      const dx = x - pointer.x, dy = y - pointer.y;
+      const bump = Math.exp(-(dx * dx + dy * dy) / 7200);
+      return Math.min(1, Math.max(0, v * 0.8 + bump * 0.9));
+    }
+
+    // one ink layer: a rotated dot screen, dot area proportional to the field value
+    function inkScreen(color, angle, phase, ox, oy, t) {
+      const cos = Math.cos(angle), sin = Math.sin(angle);
+      const cx = W / 2, cy = H / 2;
+      const n = Math.ceil(Math.hypot(W, H) / 2 / SPACING) + 1;
+      const maxR = SPACING * 0.62;
+      ctx.beginPath();
+      for (let i = -n; i <= n; i++) {
+        for (let j = -n; j <= n; j++) {
+          const u = i * SPACING, w = j * SPACING;
+          const x = cx + u * cos - w * sin;
+          const y = cy + u * sin + w * cos;
+          if (x < -maxR || y < -maxR || x > W + maxR || y > H + maxR) continue;
+          const r = maxR * Math.sqrt(field(x, y, t, phase));
+          if (r < 0.4) continue;
+          ctx.moveTo(x + ox + r, y + oy);
+          ctx.arc(x + ox, y + oy, r, 0, Math.PI * 2);
+        }
+      }
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
+
+    function draw(t = performance.now() / 1000) {
+      if (!W || !H) return;
+      const time = reduce.matches ? 0 : t;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.fillStyle = inks.paper;
+      ctx.fillRect(0, 0, W, H);
+      ctx.globalCompositeOperation = 'screen';
+      inkScreen(inks.b, (75 * Math.PI) / 180, 1.7, plate.x, plate.y, time);
+      inkScreen(inks.a, (15 * Math.PI) / 180, 0, 0, 0, time);
+    }
+
+    function resizePress() {
+      const r = canvas.getBoundingClientRect();
+      dpr = Math.min(2, devicePixelRatio || 1);
+      W = r.width;
+      H = r.height;
+      canvas.width = Math.max(1, Math.round(W * dpr));
+      canvas.height = Math.max(1, Math.round(H * dpr));
+      draw();
+    }
+
+    addEventListener('pointermove', (e) => {
+      const r = canvas.getBoundingClientRect();
+      pointer.x = e.clientX - r.left;
+      pointer.y = e.clientY - r.top;
+      if (lastX !== null && !reduce.matches) {
+        plate.vx += (e.clientX - lastX) * 0.06;
+        plate.vy += (e.clientY - lastY) * 0.06;
+      }
+      lastX = e.clientX;
+      lastY = e.clientY;
+      if (reduce.matches) draw();
+    }, { passive: true });
+
+    let running = false, inView = true;
+    function loop(now) {
+      if (!running) return;
+      // spring the blue plate back to its resting misregistration
+      plate.vx = (plate.vx + (REST.x - plate.x) * 0.08) * 0.82;
+      plate.vy = (plate.vy + (REST.y - plate.y) * 0.08) * 0.82;
+      plate.x = Math.max(-16, Math.min(16, plate.x + plate.vx));
+      plate.y = Math.max(-16, Math.min(16, plate.y + plate.vy));
+      draw(now / 1000);
+      requestAnimationFrame(loop);
+    }
+    function setRunning() {
+      const should = inView && !document.hidden && !reduce.matches && press.isConnected;
+      if (should && !running) { running = true; requestAnimationFrame(loop); }
+      else if (!should) running = false;
+    }
+    new IntersectionObserver((entries) => { inView = entries[0].isIntersecting; setRunning(); }).observe(press);
+    new ResizeObserver(resizePress).observe(canvas);
+    document.addEventListener('visibilitychange', setRunning);
+    reduce.addEventListener('change', () => { setRunning(); draw(); });
+
+    /* ---- animation frame position ---- */
+    const slotButtons = [...document.querySelectorAll('[data-slot-id]')];
+    const slots = [...document.querySelectorAll('.anim-slot')];
+    function placePress(id) {
+      const target = slots.find((s) => s.dataset.slot === id);
+      if (target) target.appendChild(press);
+      else press.remove();
+      slots.forEach((s) => { s.hidden = !s.contains(press); });
+      slotButtons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.slotId === id)));
+      try { localStorage.setItem('lun-press', id); } catch (e) {}
+      requestAnimationFrame(() => { resizePress(); setRunning(); updateGauge(); });
+    }
+    slotButtons.forEach((b) => b.addEventListener('click', () => placePress(b.dataset.slotId)));
+    let savedSlot = 'left';
+    try { savedSlot = localStorage.getItem('lun-press') || 'left'; } catch (e) {}
+    readInks();
+    placePress(slotButtons.some((b) => b.dataset.slotId === savedSlot) ? savedSlot : 'left');
+
+    /* ---- style switcher ---- */
+    const styleButtons = [...document.querySelectorAll('[data-style-id]')];
+    function applyStyle(id) {
+      if (id === 'riso') root.removeAttribute('data-style');
+      else root.setAttribute('data-style', id);
+      styleButtons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.styleId === id)));
+      try { localStorage.setItem('lun-style', id); } catch (e) {}
+      requestAnimationFrame(() => { frame(); updateGauge(); readInks(); draw(); });
+    }
+    styleButtons.forEach((b) => b.addEventListener('click', () => applyStyle(b.dataset.styleId)));
+    let saved = 'riso';
+    const fromHash = location.hash.slice(1);
+    try { saved = localStorage.getItem('lun-style') || 'riso'; } catch (e) {}
+    if (styleButtons.some((b) => b.dataset.styleId === fromHash)) saved = fromHash;
+    applyStyle(styleButtons.some((b) => b.dataset.styleId === saved) ? saved : 'riso');
+
+    document.fonts && document.fonts.ready.then(() => { frame(); updateGauge(); });
+    frame();
+    updateGauge();
+  })();
+</script>

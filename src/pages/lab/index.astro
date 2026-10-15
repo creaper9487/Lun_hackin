@@ -1,0 +1,81 @@
+---
+import LabShell from '../../lab/LabShell.astro';
+
+const concepts = [
+	{
+		href: '/lab/a',
+		name: 'A 藍曬筆記',
+		idea: '普魯士藍方格紙、楷書手感、螢光筆標記。像一本攤開的實驗筆記本。',
+		type: '霞鶩文楷 TC',
+	},
+	{
+		href: '/lab/b',
+		name: 'B 孔版印刷',
+		idea: '深紫紙上的螢光粉與藍色油墨，兩層套印微微錯位。大字、粗線、網點色塊。',
+		type: '思源黑體 900',
+	},
+	{
+		href: '/lab/c',
+		name: 'C 直排檔案',
+		idea: '苔墨綠底、思源宋體直排標題、中文數字日期、一枚朱紅印章。安靜、適合長文。',
+		type: '思源宋體',
+	},
+];
+---
+
+<LabShell title="Lab" fonts="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap">
+	<main>
+		<h1>設計方向探索</h1>
+		<p>三個深色首頁方向，內容相同、只換視覺。點進去比較，或用下方切換列快速跳轉。</p>
+		<ul>
+			{
+				concepts.map((c) => (
+					<li>
+						<a href={c.href}>{c.name}</a>
+						<p>{c.idea}</p>
+						<p class="type">字體：{c.type}</p>
+					</li>
+				))
+			}
+		</ul>
+	</main>
+</LabShell>
+
+<style>
+	:global(body) {
+		background: #19191c;
+		color: #e8e8ea;
+		font-family: 'Noto Sans TC', system-ui, sans-serif;
+		line-height: 1.7;
+	}
+	main {
+		max-width: 40rem;
+		margin: 0 auto;
+		padding: 4rem 1rem 7rem;
+	}
+	h1 {
+		margin: 0 0 0.5rem;
+		font-size: 2rem;
+	}
+	ul {
+		margin: 2.5rem 0 0;
+		padding: 0;
+		list-style: none;
+	}
+	li {
+		padding: 1.25rem 0;
+		border-top: 1px solid #333;
+	}
+	a {
+		color: #fff;
+		font-size: 1.375rem;
+		font-weight: 700;
+	}
+	li p {
+		margin: 0.25rem 0 0;
+		color: #b4b4ba;
+	}
+	.type {
+		font-size: 0.875rem;
+	}
+</style>

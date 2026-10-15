@@ -1,0 +1,20 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+
+type Props = CollectionEntry<'blog'>['data'];
+
+const { title, description, pubDate, updatedDate, tags } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+	<article>
+		<h1>{title}</h1>
+		<p>
+			<time datetime={pubDate.toISOString()}>{pubDate.toLocaleDateString('zh-TW')}</time>
+			{updatedDate && <span> · updated {updatedDate.toLocaleDateString('zh-TW')}</span>}
+		</p>
+		{tags.length > 0 && <ul>{tags.map((tag) => <li>{tag}</li>)}</ul>}
+		<slot />
+	</article>
+</BaseLayout>
