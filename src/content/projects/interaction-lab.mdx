@@ -1,0 +1,20 @@
+---
+title: Interaction Lab
+description: Small front-end interaction demos, for ideas and experiments.
+year: 2026
+stack: [React, Vue, CSS]
+tone: pink
+order: 3
+---
+
+import Counter from '../../components/react/Counter';
+import VueCounter from '../../components/vue/VueCounter.vue';
+
+A collection of small front-end interaction experiments. The first one is simple: React and Vue components on the same page, each loaded on its own.
+
+<div class="demo-row">
+	<Counter client:visible />
+	<VueCounter client:visible />
+</div>
+
+{/* TODO: add later experiments here. */}

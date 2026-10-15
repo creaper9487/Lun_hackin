@@ -14,7 +14,7 @@ const posts = (await getCollection('blog', ({ data }) => import.meta.env.DEV || 
 			posts.map((post) => (
 				<li>
 					<a href={`/blog/${post.id}/`}>{post.data.title}</a>
-					<time datetime={post.data.pubDate.toISOString()}>{post.data.pubDate.toLocaleDateString('zh-TW')}</time>
+					<time datetime={post.data.pubDate.toISOString()}>{post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
 				</li>
 			))
 		}

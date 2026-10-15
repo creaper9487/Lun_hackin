@@ -13,6 +13,10 @@ const { title = SITE_TITLE, description = SITE_DESCRIPTION, showSiteChrome = tru
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
+const nav = [
+	{ href: '/blog/', key: 'nav.blog' },
+	{ href: '/projects/', key: 'nav.projects' },
+] as const;
 ---
 
 <!doctype html>
@@ -32,10 +36,11 @@ const t = useTranslations(lang);
 	</head>
 	<body>
 		{showSiteChrome && <header class="site-header">
+			<a class="site-mark" href="/">@Lun-hackin</a>
 			<nav aria-label="Main navigation">
-				<a href="/">{t('nav.home')}</a>
-				<a href="/blog">{t('nav.blog')}</a>
-				<a href="/projects">{t('nav.projects')}</a>
+				{nav.map((item) => (
+					<a href={item.href} aria-current={Astro.url.pathname.startsWith(item.href) ? 'page' : undefined}>{t(item.key)}</a>
+				))}
 			</nav>
 		</header>}
 		{showSiteChrome ? <main><slot /></main> : <slot />}

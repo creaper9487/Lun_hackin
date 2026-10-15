@@ -11,8 +11,8 @@ const { title, description, pubDate, updatedDate, tags } = Astro.props;
 	<article>
 		<h1>{title}</h1>
 		<p>
-			<time datetime={pubDate.toISOString()}>{pubDate.toLocaleDateString('zh-TW')}</time>
-			{updatedDate && <span> · updated {updatedDate.toLocaleDateString('zh-TW')}</span>}
+			<time datetime={pubDate.toISOString()}>{pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
+			{updatedDate && <span> · updated {updatedDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>}
 		</p>
 		{tags.length > 0 && <ul>{tags.map((tag) => <li>{tag}</li>)}</ul>}
 		<slot />

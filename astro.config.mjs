@@ -11,8 +11,8 @@ export default defineConfig({
 	// TODO: replace with the real domain (required for sitemap / RSS / canonical URLs)
 	site: 'https://example.com',
 	i18n: {
-		defaultLocale: 'zh-tw',
-		locales: ['zh-tw', 'en'],
+		defaultLocale: 'en',
+		locales: ['en', 'zh-tw'],
 		routing: { prefixDefaultLocale: false },
 	},
 	integrations: [react(), vue(), mdx(), sitemap()],

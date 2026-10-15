@@ -1,12 +1,28 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Counter from '../../components/react/Counter';
-import VueCounter from '../../components/vue/VueCounter.vue';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
-<BaseLayout title="Projects">
-	<h1>Projects</h1>
-	<p>Interactive demos — React and Vue islands side by side.</p>
-	<Counter client:load />
-	<VueCounter client:load />
+<BaseLayout title="Projects" description="Things I have built: smart contracts, front-end interactions and websites.">
+	<section class="listing-page" aria-labelledby="projects-title">
+		<header class="listing-head">
+			<p class="eyebrow">SELECTED PROJECTS</p>
+			<h1 id="projects-title">Projects</h1>
+			<span class="journey-count">{pad(projects.length)} projects</span>
+		</header>
+		<ul class="project-grid">
+			{projects.map((project, index) => (
+				<li>
+					<a class:list={['project-tile', 'tone-panel', project.data.tone]} href={`/projects/${project.id}/`}>
+						<div class="card-meta"><span>{project.data.year}</span><span>{pad(index + 1)} / {pad(projects.length)}</span></div>
+						<div class="card-main"><h2>{project.data.title}</h2><p>{project.data.description}</p></div>
+						<div class="card-footer"><span>{project.data.stack.join(' · ')}</span><span class="card-arrow" aria-hidden="true">↗</span></div>
+					</a>
+				</li>
+			))}
+		</ul>
+	</section>
 </BaseLayout>

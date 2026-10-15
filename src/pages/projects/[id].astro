@@ -1,0 +1,46 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+	const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+	return projects.map((project, index) => ({
+		params: { id: project.id },
+		props: { project, index, total: projects.length, next: projects[(index + 1) % projects.length] },
+	}));
+}
+
+const { project, index, total, next } = Astro.props;
+const { title, description, year, stack, tone, repo, site } = project.data;
+const { Content } = await render(project);
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<BaseLayout title={title} description={description}>
+	<article class="project-page">
+		<a class="back-link" href="/projects/"><span aria-hidden="true">⟵</span> All projects</a>
+
+		<header class:list={['project-hero', 'tone-panel', tone]}>
+			<div class="card-meta"><span>{year}</span><span>{pad(index + 1)} / {pad(total)}</span></div>
+			<div class="card-main"><h1>{title}</h1><p>{description}</p></div>
+			<div class="card-footer"><span>{stack.join(' · ')}</span></div>
+		</header>
+
+		<dl class="project-facts">
+			<div><dt>YEAR</dt><dd>{year}</dd></div>
+			<div><dt>STACK</dt><dd>{stack.join(', ')}</dd></div>
+			{repo && <div><dt>SOURCE</dt><dd><a href={repo}>GitHub <span aria-hidden="true">↗</span></a></dd></div>}
+			{site && <div><dt>SITE</dt><dd><a href={site}>Visit <span aria-hidden="true">↗</span></a></dd></div>}
+		</dl>
+
+		<div class="prose"><Content /></div>
+
+		{next.id !== project.id && (
+			<a class="next-project" href={`/projects/${next.id}/`}>
+				<span class="next-label">NEXT PROJECT</span>
+				<span class="next-title">{next.data.title}</span>
+				<span class="next-arrow" aria-hidden="true">⟶</span>
+			</a>
+		)}
+	</article>
+</BaseLayout>

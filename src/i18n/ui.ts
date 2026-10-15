@@ -1,11 +1,11 @@
 export const languages = {
-	'zh-tw': '繁體中文',
 	en: 'English',
+	'zh-tw': '繁體中文',
 } as const;
 
 export type Lang = keyof typeof languages;
 
-export const defaultLang: Lang = 'zh-tw';
+export const defaultLang: Lang = 'en';
 
 export const htmlLang: Record<Lang, string> = {
 	'zh-tw': 'zh-Hant-TW',
