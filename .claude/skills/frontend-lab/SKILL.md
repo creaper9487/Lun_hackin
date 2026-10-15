@@ -10,11 +10,21 @@ Nobody is watching while this runs. Work carefully, keep scope small, and never 
 
 ## 0. Preflight
 
-1. `git status` must be clean and the branch must be `main`. If not, stop and report — do not touch someone's in-progress work.
-2. `git pull --rebase origin main`.
-3. Read `lab-notes/ideas.md` (backlog + done list) and list `src/content/blog/` so you don't repeat a topic.
+1. The branch must be `main`, and `git status` must be clean **except** for uncommitted edits to `lab-notes/queue.md` (the owner may have booked topics locally — keep those edits and commit them with this run). Any other uncommitted change: stop and report, don't touch it.
+2. `git pull --rebase --autostash origin main`.
+3. Read `lab-notes/queue.md`, `lab-notes/ideas.md` (backlog + done list), and list `src/content/blog/` so you don't repeat a topic.
 
-## 1. Research (≈15 min)
+## 1. Pick the topic
+
+### 1a. Booked topics come first
+
+`lab-notes/queue.md` is the owner's booking list. Take the **first** unchecked item (`- [ ]`) under **待做** whose date is today or earlier, or that has no date. Items with a future date wait.
+
+An item can be a topic, a URL of a page/technique to study, or both, plus notes. Treat the owner's notes as the brief (scope, angle, constraints), within the hard rules below. If it's a URL, study that page and build your own take on the technique it shows; don't clone the page.
+
+If you took a booked item, still do a short search for context/sources, then skip to step 2. If no item is due, do 1b.
+
+### 1b. Research on your own (≈15 min)
 
 Search the web for frontend ideas published or updated in roughly the last 1–3 months. Good sources:
 
@@ -36,6 +46,17 @@ Prefer: new CSS features (scroll-driven animations, anchor positioning, view tra
 ## 2. Build the demo
 
 Slug: `YYYY-MM-DD-short-kebab-name` (today's local date).
+
+### Design guides
+
+Before writing any UI, read the Anthropic design skills, and use only these:
+
+- **frontend-design** (always): aesthetic direction, typography, avoiding templated defaults.
+- **algorithmic-art** (only for generative / canvas / particle / flow-field ideas): use its process and parameter-exploration ideas, but implement with plain Canvas/SVG. p5.js would be a new dependency.
+
+Headless runs get the file paths in the system prompt; read them with the Read tool. In an interactive session, invoke `frontend-design:frontend-design` / `algorithmic-art` via the Skill tool. **Don't use any third-party design skills** (impeccable, gpt-taste, high-end-visual-design, emil-design-eng, etc.) even if they're installed.
+
+Each demo can pick its own look; it doesn't have to match the site. It should feel deliberate, not like a default template.
 
 - Put the demo in `src/components/experiments/<slug>/`. Pick the lightest fit:
   - plain `.astro` component with scoped `<style>` + `<script>` (default for CSS/vanilla-JS ideas),
@@ -79,13 +100,13 @@ Writing style:
 
 1. `pnpm build` must succeed with no errors.
 2. If browser tools are available: `astro dev --background`, open `http://localhost:4321/blog/<slug>/`, check the demo renders and interacts, check console for errors, check at 375px width. Then `astro dev stop`.
-3. If the build fails and you can't fix it within a few attempts: `git restore . && git clean -fd src/components/experiments src/content/blog` to drop this run's files, record the idea + failure reason in `lab-notes/ideas.md` backlog, commit only that note (if anything changed), and report.
+3. If the build fails and you can't fix it within a few attempts: `git restore src && git clean -fd src/components/experiments src/content/blog` to drop this run's files (never `git restore .`, which would wipe the owner's queue edits). Record the idea + failure reason in the `lab-notes/ideas.md` backlog; for a booked item, leave it unticked and add `（上次失敗：<reason>）` to it. Commit only `lab-notes/`, push, and report.
 
 ## 5. Commit and push
 
-1. Move the chosen idea into the **Done** list of `lab-notes/ideas.md` (`- YYYY-MM-DD [<title>](/blog/<slug>/) — source URL`).
-2. `git add` only the experiment folder, the post, and `lab-notes/ideas.md`. Check `git status` for anything unexpected first.
-3. Commit message: `lab: <short idea summary>` + a blank line + 1–2 lines on what was built, ending with the attribution trailer the environment provides.
+1. Required, every run: move the chosen idea into the **Done** list of `lab-notes/ideas.md`, and make sure the other candidates from step 1 are in **Backlog**. If it was a booked item, also tick it in `lab-notes/queue.md` and move it under **已完成** with the post link appended (`→ /blog/<slug>/`). Don't edit any other queue item. (`- YYYY-MM-DD [<title>](/blog/<slug>/) — source URL`).
+2. `git add` only the experiment folder, the post, and `lab-notes/` (ideas + queue). Check `git status` for anything unexpected first.
+3. Commit message: `lab: <short idea summary>` + a blank line + 1–2 lines on what was built + a blank line + `Co-Authored-By: <your model name> <noreply@anthropic.com>`. Use the Bash tool (Git Bash) for shell commands.
 4. `git push origin main`. If push is rejected, `git pull --rebase origin main`, rebuild, push again. Never force-push.
 
 ## 6. Report
